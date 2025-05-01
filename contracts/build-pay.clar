@@ -75,7 +75,7 @@
                 (total-amount uint) 
                 (retention-rate uint))
   (let ((project-id (var-get next-project-id))
-        (block-height (get-block-info? height u0)))
+        (block-time (get-block-info? time u0)))
 
     ;; Validate inputs
     (asserts! (< retention-rate u30) (err ERR_INVALID_STATE)) ;; Max 30% retention
@@ -92,7 +92,7 @@
         retention-rate: retention-rate,
         state: STATE_CREATED,
         milestone-count: u0,
-        created-at: (default-to u0 block-height)
+        created-at: (default-to u0 block-time)
       }
     )
 
@@ -184,7 +184,7 @@
 (define-public (approve-milestone (project-id uint) (milestone-id uint))
   (let ((project (unwrap! (get-project project-id) (err ERR_MILESTONE_NOT_FOUND)))
         (milestone (unwrap! (get-milestone project-id milestone-id) (err ERR_MILESTONE_NOT_FOUND)))
-        (block-height (get-block-info? height u0)))
+        (block-time (get-block-info? time u0)))
 
     ;; Only project owner can approve milestones
     (asserts! (is-eq tx-sender (get owner project)) (err ERR_UNAUTHORIZED))
@@ -201,7 +201,7 @@
       (merge milestone { 
         status: STATUS_APPROVED,
         approved-by: (some tx-sender),
-        approved-at: (some (default-to u0 block-height))
+        approved-at: (some (default-to u0 block-time))
       })
     )
 
@@ -214,7 +214,7 @@
   (let ((project (unwrap! (get-project project-id) (err ERR_MILESTONE_NOT_FOUND)))
         (milestone (unwrap! (get-milestone project-id milestone-id) (err ERR_MILESTONE_NOT_FOUND)))
         (project-balance (get balance (get-project-balance project-id)))
-        (block-height (get-block-info? height u0))
+        (block-time (get-block-info? time u0))
         (milestone-amount (get amount milestone))
         (retention-amount (/ (* milestone-amount (get retention-rate project)) u100))
         (payment-amount (- milestone-amount retention-amount)))
@@ -239,7 +239,7 @@
       { project-id: project-id, milestone-id: milestone-id }
       (merge milestone { 
         status: STATUS_PAID,
-        paid-at: (some (default-to u0 block-height))
+        paid-at: (some (default-to u0 block-time))
       })
     )
 
