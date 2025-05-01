@@ -1,5 +1,5 @@
 ;; BuildPay - Smart contract for milestone-based payments in construction projects
-;; Author: v0
+;; Author: MunaChiX20
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED u1)
